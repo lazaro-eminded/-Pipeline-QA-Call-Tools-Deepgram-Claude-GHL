@@ -1,0 +1,28 @@
+{
+  "name": "eminded-qa-pipeline",
+  "version": "1.0.0",
+  "description": "Pipeline QA: Call Tools -> Deepgram -> Claude -> GHL. Automatiza el QA de llamadas de telemarketing para E-Minded Solutions.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "qa",
+    "telemarketing",
+    "deepgram",
+    "claude",
+    "ghl",
+    "calltools"
+  ],
+  "author": "E-Minded Solutions",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@deepgram/sdk": "^3.9.0",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
