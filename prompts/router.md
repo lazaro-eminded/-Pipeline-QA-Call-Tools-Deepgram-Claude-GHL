@@ -1,8 +1,9 @@
 # Router — Clasificador de Tipo de Llamada + Vertical
 
-> Versión: 1.0
+> Versión: 1.1
 > Fecha: 2026-04-12
 > Estado: Aprobado
+> Cambio v1.1: Agregada vertical "asesoria_legal" para distinguir solar nuevo vs. clientes con paneles existentes
 
 ## Uso
 
@@ -29,7 +30,9 @@ TIPOS DE LLAMADA:
 
 VERTICALES:
 
-"solar" — Se habla de electricidad, factura de luz, bill eléctrico, paneles solares, Net Metering, medición neta, intercambio de factura, energía renovable, FPL, Duke Energy, incentivo gubernamental, ITC, ahorro energético.
+"solar" — Venta de paneles solares a alguien que NO tiene paneles actualmente. Se habla de electricidad, factura de luz, bill eléctrico, Net Metering, medición neta, intercambio de factura, energía renovable, FPL, Duke Energy, incentivo gubernamental, ITC, ahorro energético. El prospecto NO menciona tener paneles instalados. El setter presenta el programa como algo nuevo para el prospecto.
+
+"asesoria_legal" — El prospecto YA TIENE paneles solares instalados y tiene problemas (engaño, doble facturación, promesas incumplidas, empresa desapareció). Se habla de: lo que le prometieron vs. la realidad, compañía instaladora, financiera del préstamo, eliminación de deuda, violaciones, "especialista que evalúa su caso". La clave: el prospecto TIENE paneles y busca ayuda con problemas derivados de esa instalación.
 
 "mitigacion" — Se habla de techo, roof, seguro de propiedad, insurance, daños, humedad, liqueos, goteras, inspección, cámara térmica, shingle, teja, reclamación, public adjuster, "no recovery no fee", papelería.
 
@@ -42,7 +45,7 @@ Responde ÚNICAMENTE con este JSON válido, sin texto adicional:
 
 {
   "tipo_llamada": "cold_call | lead | seguimiento | confirmacion | otro",
-  "vertical": "solar | mitigacion | desconocido",
+  "vertical": "solar | asesoria_legal | mitigacion | desconocido",
   "confianza_tipo": 0.95,
   "confianza_vertical": 0.90,
   "razon_tipo": "frase breve explicando por qué clasificaste así",
@@ -59,10 +62,12 @@ Router clasifica
        |
        ├── cold_call
        │     ├── Solar → prompts/cold-call-solar.md
+       │     ├── Asesoría Legal → prompts/cold-call-asesoria-legal.md
        │     └── Mitigación → prompts/cold-call-mitigacion.md
        │
        ├── lead
        │     ├── Solar → prompts/lead-solar.md
+       │     ├── Asesoría Legal → prompts/lead-asesoria-legal.md
        │     └── Mitigación → prompts/lead-mitigacion.md
        │
        ├── seguimiento → prompts/seguimiento.md
