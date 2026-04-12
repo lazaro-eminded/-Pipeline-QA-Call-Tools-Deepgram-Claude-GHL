@@ -1,9 +1,10 @@
 # Router — Clasificador de Tipo de Llamada + Vertical
 
-> Versión: 1.1
+> Versión: 1.2
 > Fecha: 2026-04-12
 > Estado: Aprobado
 > Cambio v1.1: Agregada vertical "asesoria_legal" para distinguir solar nuevo vs. clientes con paneles existentes
+> Cambio v1.2: Agregado tipo "reagendar" para llamadas incompletas donde el prospecto pide ser contactado después
 
 ## Uso
 
@@ -26,7 +27,9 @@ TIPOS DE LLAMADA:
 
 "confirmacion" — Llamada corta para confirmar una cita ya agendada. El objetivo es verificar fecha, hora, dirección y quiénes estarán presentes. No hay pitch ni calificación.
 
-"otro" — Cualquier otra llamada: reschedule, cancelación, consulta informativa, llamada interna, o llamada que no encaja en las categorías anteriores.
+"reagendar" — La llamada comenzó pero el prospecto pidió inmediatamente ser contactado en otro momento. NO hubo conversación sustantiva sobre el producto o servicio. La llamada es muy corta (<3 minutos). Señales: "estoy ocupada", "llámame mañana", "no puedo hablar ahorita", "¿puede ser otro día?". IMPORTANTE: el prospecto NO rechazó el servicio — solo pidió otro momento. Si hubo cualquier discusión sobre el programa (precio, beneficios, objeciones), NO es reagendar — es una llamada incompleta del tipo correspondiente (lead, cold_call, etc.).
+
+"otro" — Cualquier otra llamada: cancelación, consulta informativa, llamada interna, o llamada que no encaja en las categorías anteriores.
 
 VERTICALES:
 
@@ -44,7 +47,7 @@ TRANSCRIPCIÓN:
 Responde ÚNICAMENTE con este JSON válido, sin texto adicional:
 
 {
-  "tipo_llamada": "cold_call | lead | seguimiento | confirmacion | otro",
+  "tipo_llamada": "cold_call | lead | seguimiento | confirmacion | reagendar | otro",
   "vertical": "solar | asesoria_legal | mitigacion | desconocido",
   "confianza_tipo": 0.95,
   "confianza_vertical": 0.90,
@@ -70,8 +73,9 @@ Router clasifica
        │     ├── Asesoría Legal → prompts/lead-asesoria-legal.md
        │     └── Mitigación → prompts/lead-mitigacion.md
        │
-       ├── seguimiento → prompts/seguimiento.md
+       ├── seguimiento → prompts/seguimiento-solar.md (u otro según vertical)
        ├── confirmacion → prompts/confirmacion.md
+       ├── reagendar → prompts/reagendar.md
        └── otro → prompts/otro.md
 ```
 
