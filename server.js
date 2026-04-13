@@ -123,9 +123,77 @@ function createWebhookHandler(campaign) {
   };
 }
 
-// ─── Endpoints por campaña ───────────────────────────────────────────────────
+// ─── Endpoints por campaña (específicos) ─────────────────────────────────────
 app.post('/webhook/solar', createWebhookHandler(CAMPAIGN_CONFIG.solar));
 app.post('/webhook/mitigacion', createWebhookHandler(CAMPAIGN_CONFIG.mitigacion));
+
+// ─── Endpoint universal (Call Tools apunta aquí) ─────────────────────────────
+// El Router clasifica la vertical automáticamente y enruta a la subcuenta correcta
+const { classifyCall } = require('./src/analyze');
+
+app.post('/webhook/calltools', async (req, res) => {
+  res.status(200).json({ received: true });
+
+  const body = req.body;
+  console.log('\n[Webhook - CallTools] Payload recibido:', JSON.stringify(body, null, 2));
+
+  const recordingUrl = body.recordingUrl;
+  if (!recordingUrl) {
+    console.error('[Webhook - CallTools] No hay recordingUrl en el payload, ignorando.');
+    return;
+  }
+
+  const phoneNumber = body.phone;
+  const agentName = body.user;
+  const contactName = `${body.firstName || ''} ${body.lastName || ''}`.trim();
+
+  console.log(`[Webhook - CallTools] Agente: ${agentName || 'N/A'}, Contacto: ${contactName || 'N/A'}, Tel: ${phoneNumber}`);
+
+  // Esperar 60s para que el audio esté disponible
+  console.log('[Webhook - CallTools] Esperando 60s para que el audio esté disponible...');
+  await new Promise(resolve => setTimeout(resolve, 60000));
+
+  try {
+    // Paso 1: Transcribir
+    console.log('[Webhook - CallTools] Transcribiendo con Deepgram...');
+    const { transcribeCall } = require('./src/transcribe');
+    const transcript = await transcribeCall(recordingUrl);
+    if (!transcript) {
+      console.error('[Webhook - CallTools] Transcripción vacía, abortando.');
+      return;
+    }
+    console.log(`[Webhook - CallTools] Transcripción completada (${transcript.length} chars)`);
+
+    // Paso 2: Analizar con Router + Prompt especializado
+    console.log('[Webhook - CallTools] Analizando con Claude (Router + QA)...');
+    const { analyzeCall } = require('./src/analyze');
+    const qa = await analyzeCall(transcript, null, agentName);
+    const routerVertical = qa.router?.vertical || 'desconocido';
+    console.log(`[Webhook - CallTools] Router: ${qa.router?.tipo_llamada}/${routerVertical}`);
+    console.log(`[Webhook - CallTools] Score: ${qa.puntaje_total} — ${qa.nivel}`);
+
+    // Paso 3: Determinar subcuenta GHL basado en la vertical del Router
+    let locationId;
+    if (routerVertical === 'mitigacion') {
+      locationId = process.env.GHL_LOCATION_ID_MITIGACION;
+    } else {
+      // solar, asesoria_legal, desconocido → subcuenta Solar
+      locationId = process.env.GHL_LOCATION_ID_SOLAR;
+    }
+
+    // Paso 4: Guardar nota en GHL
+    if (phoneNumber) {
+      console.log(`[Webhook - CallTools] Guardando nota en GHL (location: ${locationId})...`);
+      const { saveNoteInGHL } = require('./src/ghl');
+      await saveNoteInGHL(phoneNumber, qa, process.env.GHL_TOKEN, process.env.GHL_USER_ID, locationId);
+      console.log('[Webhook - CallTools] ✅ Nota guardada en GHL');
+    }
+
+    console.log('[Webhook - CallTools] ✅ Proceso completado');
+  } catch (err) {
+    console.error('[Webhook - CallTools] Error:', err.message);
+  }
+});
 
 // Health check
 app.get('/health', (req, res) => {
@@ -134,14 +202,16 @@ app.get('/health', (req, res) => {
     service: 'E-Minded QA Pipeline v2.0 (Router + Prompts)',
     timestamp: new Date().toISOString(),
     endpoints: {
-      solar: 'POST /webhook/solar → GHL: E-Minded Solutions',
-      mitigacion: 'POST /webhook/mitigacion → GHL: SAF Services',
+      calltools: 'POST /webhook/calltools → Router determina vertical → GHL subcuenta correcta',
+      solar: 'POST /webhook/solar → GHL: E-Minded Solutions (directo)',
+      mitigacion: 'POST /webhook/mitigacion → GHL: SAF Services (directo)',
     },
   });
 });
 
 app.listen(PORT, () => {
   console.log(`\n🚀 E-Minded QA Pipeline v2.0 corriendo en puerto ${PORT}`);
+  console.log(` CallTools: POST http://localhost:${PORT}/webhook/calltools (universal)`);
   console.log(` Solar: POST http://localhost:${PORT}/webhook/solar`);
   console.log(` Mitigación: POST http://localhost:${PORT}/webhook/mitigacion`);
   console.log(` Health: GET http://localhost:${PORT}/health\n`);
