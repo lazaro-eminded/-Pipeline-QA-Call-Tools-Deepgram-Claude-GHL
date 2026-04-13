@@ -209,6 +209,8 @@ app.get('/health', (req, res) => {
   });
 });
 
+module.exports = app;
+
 app.listen(PORT, () => {
   console.log(`\n🚀 E-Minded QA Pipeline v2.0 corriendo en puerto ${PORT}`);
   console.log(` CallTools: POST http://localhost:${PORT}/webhook/calltools (universal)`);

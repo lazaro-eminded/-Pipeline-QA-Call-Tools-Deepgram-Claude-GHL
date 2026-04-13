@@ -155,4 +155,4 @@ async function saveNoteInGHL(phoneNumber, qa, token, userId, locationId) {
   console.log(`[GHL] ✅ Nota guardada en contacto ${contactId}`);
 }
 
-module.exports = { saveNoteInGHL };
+module.exports = { saveNoteInGHL, normalizePhone, formatQANote, findContactByPhone };

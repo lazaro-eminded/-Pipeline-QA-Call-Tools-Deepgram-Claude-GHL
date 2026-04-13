@@ -100,4 +100,4 @@ function buildTranscript(result) {
   return result.results.channels[0].alternatives[0].transcript;
 }
 
-module.exports = { transcribeCall };
+module.exports = { transcribeCall, buildTranscript };

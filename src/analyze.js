@@ -172,4 +172,4 @@ async function analyzeCall(transcript, verticalHint, agentName) {
   return qa;
 }
 
-module.exports = { analyzeCall, classifyCall };
+module.exports = { analyzeCall, classifyCall, loadPrompt, PROMPT_MAP };
