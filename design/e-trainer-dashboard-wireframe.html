@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>E-Trainer — wireframe LeadMinded</title>
+    <link rel="stylesheet" href="leadminded-theme.css" />
+    <style>
+      /* Structural-only preview: source visual identity from leadminded-theme.css. */
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--lm-surface-canvas); color: var(--lm-text-primary); font-family: var(--lm-font-body); }
+      .app { display: grid; grid-template-columns: 15.5rem 1fr; min-height: 100vh; }
+      aside { padding: 1.5rem 1rem; border-right: 1px solid var(--lm-border); }
+      .brand { font-family: var(--lm-font-display); font-weight: 700; margin: .5rem .75rem 2.5rem; }
+      .brand::after { content: "LOGO OFICIAL PENDIENTE"; display: block; font: .65rem/1.4 var(--lm-font-body); color: var(--lm-text-muted); letter-spacing: .08em; }
+      nav a { display: block; padding: .8rem .75rem; color: var(--lm-text-primary); text-decoration: none; border-radius: var(--lm-radius-control); }
+      nav a[aria-current="page"] { background: var(--lm-brand-primary); color: var(--lm-surface-panel); }
+      main { padding: 2.5rem; max-width: 96rem; width: 100%; margin: auto; }
+      header, .row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+      h1 { font-family: var(--lm-font-display); margin: 0; }
+      .muted { color: var(--lm-text-muted); }
+      .grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1rem; margin: 2rem 0; }
+      .card { background: var(--lm-surface-panel); border: 1px solid var(--lm-border); border-radius: var(--lm-radius-panel); box-shadow: var(--lm-shadow-panel); padding: 1.25rem; }
+      .card strong { display: block; font-family: var(--lm-font-display); font-size: 1.8rem; margin-top: .5rem; }
+      .list { display: grid; gap: .75rem; }
+      .call { display: grid; grid-template-columns: 1.5fr 1fr 1fr auto; align-items: center; gap: 1rem; }
+      button { padding: .7rem 1rem; border: 0; border-radius: var(--lm-radius-control); background: var(--lm-brand-primary); color: var(--lm-surface-panel); font: inherit; }
+      @media (max-width: 760px) { .app { grid-template-columns: 1fr; } aside { border-right: 0; border-bottom: 1px solid var(--lm-border); } nav { display: flex; overflow-x: auto; } nav a { white-space: nowrap; } main { padding: 1.25rem; } .grid { grid-template-columns: 1fr; } .call { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside>
+        <div class="brand">LeadMinded / E-Trainer</div>
+        <nav aria-label="Navegación principal">
+          <a href="#inicio" aria-current="page">Inicio</a><a href="#llamadas">Llamadas</a><a href="#coaching">Coaching</a><a href="#objeciones">Objeciones</a><a href="#academia">Academia</a><a href="#equipo">Equipo</a>
+        </nav>
+      </aside>
+      <main id="inicio">
+        <header><div><p class="muted">Buenos días, equipo</p><h1>El entrenamiento empieza en cada llamada.</h1></div><button>Nueva práctica IA</button></header>
+        <section class="grid" aria-label="Resumen de desempeño"><article class="card"><span class="muted">Llamadas analizadas</span><strong>—</strong></article><article class="card"><span class="muted">Coaching pendiente</span><strong>—</strong></article><article class="card"><span class="muted">Progreso Academia</span><strong>—</strong></article></section>
+        <section id="llamadas" class="card"><div class="row"><div><h2>Llamadas recientes</h2><p class="muted">Revisión, feedback y siguiente acción en un solo lugar.</p></div><button>Ver todas</button></div><div class="list"><article class="call"><div><strong>Contacto / empresa</strong><br><span class="muted">Fecha y duración</span></div><div>Estado de coaching</div><div>Score / insight</div><button>Ver detalle</button></article><article class="call"><div><strong>Contacto / empresa</strong><br><span class="muted">Fecha y duración</span></div><div>Estado de coaching</div><div>Score / insight</div><button>Ver detalle</button></article></div></section>
+        <section class="grid"><article id="coaching" class="card"><h2>Coaching</h2><p class="muted">Detalle de llamada: resumen, momentos clave, recomendaciones y plan de mejora.</p><button>Abrir sesión</button></article><article id="objeciones" class="card"><h2>Objeciones</h2><p class="muted">Patrones detectados, respuesta sugerida y práctica contextual.</p><button>Practicar</button></article><article id="academia" class="card"><h2>Academia</h2><p class="muted">Cursos embebidos de Tella, avance y lecciones siguientes.</p><button>Continuar curso</button></article></section>
+        <section id="equipo" class="card"><h2>Equipo</h2><p class="muted">Indicadores por persona, actividad y oportunidades de acompañamiento.</p></section>
+      </main>
+    </div>
+  </body>
+</html>

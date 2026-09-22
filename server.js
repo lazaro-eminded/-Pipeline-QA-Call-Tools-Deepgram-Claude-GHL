@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
+const path = require('path');
 const { Store } = require('./src/store');
 const { JobQueue } = require('./src/queue');
 const { makeIdempotencyKey, extractDurationSeconds, passesDurationFilter, createProcessor } = require('./src/process-call');
@@ -9,6 +10,8 @@ const app = express();
 app.use(multer().any());
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(express.json({ limit: '2mb' }));
+// UI is local-only until auth/RBAC and deployment controls are in place.
+app.use(express.static(path.join(__dirname, 'public')));
 const port = Number(process.env.PORT || 3000);
 const minDuration = Number(process.env.MIN_CALL_DURATION_SECONDS || 60);
 const allowUnknownDuration = process.env.ALLOW_UNKNOWN_DURATION === 'true';
