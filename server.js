@@ -3,7 +3,7 @@ const express = require('express');
 const multer = require('multer');
 const { Store } = require('./src/store');
 const { JobQueue } = require('./src/queue');
-const { makeIdempotencyKey, extractDurationSeconds, createProcessor } = require('./src/process-call');
+const { makeIdempotencyKey, extractDurationSeconds, passesDurationFilter, createProcessor } = require('./src/process-call');
 
 const app = express();
 app.use(multer().any());
@@ -11,6 +11,7 @@ app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(express.json({ limit: '2mb' }));
 const port = Number(process.env.PORT || 3000);
 const minDuration = Number(process.env.MIN_CALL_DURATION_SECONDS || 60);
+const allowUnknownDuration = process.env.ALLOW_UNKNOWN_DURATION === 'true';
 const store = new Store();
 const queue = new JobQueue({ store, processJob: createProcessor(store) });
 
@@ -22,8 +23,10 @@ async function receiveCall(req, res) {
   const payload = req.body || {};
   if (!payload.recordingUrl && !payload.transcript) return res.status(400).json({ received: false, error: 'recordingUrl o transcript es requerido' });
   const durationSeconds = extractDurationSeconds(payload);
-  // Unknown duration is accepted for compatibility; known short calls never invoke providers.
-  if (durationSeconds !== null && durationSeconds <= minDuration) return res.status(202).json({ received: true, queued: false, reason: 'below_minimum_duration' });
+  // Conservative default: unknown and short calls never invoke paid providers.
+  if (!passesDurationFilter(durationSeconds, minDuration, allowUnknownDuration)) {
+    return res.status(202).json({ received: true, queued: false, reason: durationSeconds === null ? 'duration_required' : 'below_minimum_duration' });
+  }
   const contactName = `${payload.firstName || ''} ${payload.lastName || ''}`.trim();
   const result = await store.createJob({
     idempotencyKey: makeIdempotencyKey(payload), recordingUrl: payload.recordingUrl || null, transcript: payload.transcript || null,

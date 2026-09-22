@@ -29,7 +29,10 @@ y `GET /api/catalog`. Los resultados se guardan localmente en `data/etrainer.jso
 `TRANSCRIPTION_PROVIDER=local` y `ANALYSIS_PROVIDER=local` son los valores por
 defecto. Para producción configure explícitamente Deepgram y Anthropic en un
 gestor de secretos, use una cuenta de prueba con límite de gasto y mantenga
-`GHL_WRITE_ENABLED=false` hasta validar los resultados. El webhook conserva las
+`GHL_WRITE_ENABLED=false` hasta validar los resultados. Por defecto una duración
+desconocida se descarta para que no eluda el límite de coste; active
+`ALLOW_UNKNOWN_DURATION=true` solo si el dialer no puede enviar duración y se
+acepta ese riesgo. El webhook conserva las
 rutas anteriores (`/webhook/calltools`, `/webhook/solar`, `/webhook/mitigacion`)
 y devuelve 202 inmediatamente; el worker procesa en segundo plano.
 

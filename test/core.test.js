@@ -5,7 +5,7 @@ const os = require('os');
 const path = require('path');
 const { Store } = require('../src/store');
 const { JobQueue } = require('../src/queue');
-const { makeIdempotencyKey, extractDurationSeconds } = require('../src/process-call');
+const { makeIdempotencyKey, extractDurationSeconds, passesDurationFilter } = require('../src/process-call');
 
 function temporaryStore() {
   return new Store(path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'etrainer-test-')), 'data.json'));
@@ -15,6 +15,11 @@ test('idempotency key is stable and duration supports Call Tools variants', () =
   assert.equal(makeIdempotencyKey({ callId: 'call-1' }), makeIdempotencyKey({ callId: 'call-1' }));
   assert.equal(extractDurationSeconds({ callDuration: '61' }), 61);
   assert.equal(extractDurationSeconds({}), null);
+  assert.equal(passesDurationFilter(59), false);
+  assert.equal(passesDurationFilter(60), false);
+  assert.equal(passesDurationFilter(61), true);
+  assert.equal(passesDurationFilter(null), false);
+  assert.equal(passesDurationFilter(null, 60, true), true);
 });
 
 test('store prevents duplicate jobs and persists a call with objections', async () => {

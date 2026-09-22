@@ -15,6 +15,11 @@ function extractDurationSeconds(payload) {
   return Number.isFinite(numeric) ? numeric : null;
 }
 
+function passesDurationFilter(durationSeconds, minimumSeconds = 60, allowUnknown = false) {
+  if (durationSeconds === null) return allowUnknown;
+  return durationSeconds > minimumSeconds;
+}
+
 function createProcessor(store) {
   return async job => {
     const transcript = job.transcript || await transcribeCall(job.recordingUrl);
@@ -34,4 +39,4 @@ function createProcessor(store) {
   };
 }
 
-module.exports = { makeIdempotencyKey, extractDurationSeconds, createProcessor };
+module.exports = { makeIdempotencyKey, extractDurationSeconds, passesDurationFilter, createProcessor };
