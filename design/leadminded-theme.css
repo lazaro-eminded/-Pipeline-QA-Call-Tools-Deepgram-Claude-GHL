@@ -1,0 +1,18 @@
+/*
+ * LeadMinded theme contract. The values intentionally have no brand fallback.
+ * Set these variables from the approved brand kit before a production build.
+ */
+:root {
+  --lm-brand-primary: var(--lm-brand-primary-approved);
+  --lm-brand-accent: var(--lm-brand-accent-approved);
+  --lm-surface-canvas: var(--lm-surface-canvas-approved);
+  --lm-surface-panel: var(--lm-surface-panel-approved);
+  --lm-text-primary: var(--lm-text-primary-approved);
+  --lm-text-muted: var(--lm-text-muted-approved);
+  --lm-border: var(--lm-border-approved);
+  --lm-font-display: var(--lm-font-display-approved);
+  --lm-font-body: var(--lm-font-body-approved);
+  --lm-radius-panel: .75rem;
+  --lm-radius-control: .5rem;
+  --lm-shadow-panel: var(--lm-shadow-panel-approved);
+}

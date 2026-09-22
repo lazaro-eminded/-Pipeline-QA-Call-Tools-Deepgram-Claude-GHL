@@ -1,0 +1,16 @@
+/* Shared from design/leadminded-theme.css for express.static public hosting. */
+:root {
+  --lm-brand-primary: var(--lm-brand-primary-approved, #1f2937);
+  --lm-brand-accent: var(--lm-brand-accent-approved, #374151);
+  --lm-surface-canvas: var(--lm-surface-canvas-approved, #f8fafc);
+  --lm-surface-panel: var(--lm-surface-panel-approved, #ffffff);
+  --lm-text-primary: var(--lm-text-primary-approved, #111827);
+  --lm-text-muted: var(--lm-text-muted-approved, #6b7280);
+  --lm-border: var(--lm-border-approved, #d1d5db);
+  --lm-font-display: var(--lm-font-display-approved, ui-sans-serif, system-ui, sans-serif);
+  --lm-font-body: var(--lm-font-body-approved, ui-sans-serif, system-ui, sans-serif);
+  --lm-radius-panel: .75rem;
+  --lm-radius-control: .5rem;
+  --lm-shadow-panel: var(--lm-shadow-panel-approved, 0 1px 2px rgb(15 23 42 / .06));
+}
+/* Defaults are explicitly neutral preview values, not LeadMinded brand choices. */

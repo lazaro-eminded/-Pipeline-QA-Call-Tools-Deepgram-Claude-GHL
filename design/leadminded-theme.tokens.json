@@ -1,0 +1,33 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "meta": {
+    "name": "LeadMinded E-Trainer theme contract",
+    "status": "requires-official-brand-assets",
+    "note": "No oficial LeadMinded logo, palette, typography, iconography, or imagery was available in the supplied workspace/reference repository. Replace only the alias tokens below when those assets are approved."
+  },
+  "color": {
+    "brand": {
+      "primary": { "$value": "{brand.primary}", "$type": "color" },
+      "accent": { "$value": "{brand.accent}", "$type": "color" }
+    },
+    "surface": {
+      "canvas": { "$value": "{surface.canvas}", "$type": "color" },
+      "panel": { "$value": "{surface.panel}", "$type": "color" }
+    },
+    "text": {
+      "primary": { "$value": "{text.primary}", "$type": "color" },
+      "muted": { "$value": "{text.muted}", "$type": "color" }
+    }
+  },
+  "space": {
+    "2": { "$value": "0.5rem", "$type": "dimension" },
+    "3": { "$value": "0.75rem", "$type": "dimension" },
+    "4": { "$value": "1rem", "$type": "dimension" },
+    "6": { "$value": "1.5rem", "$type": "dimension" },
+    "8": { "$value": "2rem", "$type": "dimension" }
+  },
+  "radius": {
+    "panel": { "$value": "0.75rem", "$type": "dimension" },
+    "control": { "$value": "0.5rem", "$type": "dimension" }
+  }
+}

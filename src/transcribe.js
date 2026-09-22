@@ -26,11 +26,16 @@ async function downloadAudio(recordingUrl) {
  * @returns {string} Transcripción con speaker labels
  */
 async function transcribeCall(recordingUrl) {
+  const provider = process.env.TRANSCRIPTION_PROVIDER || 'local';
+  if (provider === 'local') {
+    throw new Error('TRANSCRIPTION_PROVIDER=local no transcribe audio. En desarrollo envía `transcript` en el webhook o configura Deepgram.');
+  }
+  if (provider !== 'deepgram') throw new Error(`TRANSCRIPTION_PROVIDER no soportado: ${provider}`);
   const apiKey = process.env.DEEPGRAM_API_KEY;
   if (!apiKey) {
     throw new Error('DEEPGRAM_API_KEY no está configurada en las variables de entorno');
   }
-  console.log(`[Deepgram] API key encontrada (${apiKey.substring(0, 6)}...${apiKey.slice(-4)})`);
+  console.log('[Deepgram] Credencial configurada');
   const deepgram = createClient(apiKey);
 
   // Intentar primero con URL directa (más rápido)
