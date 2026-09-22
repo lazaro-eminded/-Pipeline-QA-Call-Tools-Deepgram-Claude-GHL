@@ -172,4 +172,37 @@ async function analyzeCall(transcript, verticalHint, agentName) {
   return qa;
 }
 
-module.exports = { analyzeCall, classifyCall };
+/**
+ * A single structured evaluation replaces the former router + evaluator double call.
+ * `local` is deliberately deterministic and labeled as a preview: it never pretends
+ * to have analysed an actual call when no provider credentials are configured.
+ */
+async function evaluateCallUnified(transcript, { agentName, verticalHint } = {}) {
+  const provider = process.env.ANALYSIS_PROVIDER || 'local';
+  if (provider === 'local') {
+    return {
+      agente: agentName || 'No identificado', vertical: verticalHint || 'sin clasificar',
+      tipo_llamada: 'pendiente_de_configuracion', puntaje_total: null, nivel: 'Pendiente',
+      resumen_ejecutivo: 'Vista previa local: configure ANALYSIS_PROVIDER=anthropic para una evaluación de IA.',
+      recomendaciones: [], objections: [],
+      provider: 'local', rubricVersion: 'v1',
+    };
+  }
+  if (provider !== 'anthropic') throw new Error(`ANALYSIS_PROVIDER no soportado: ${provider}`);
+  if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY no está configurada');
+
+  const prompt = `Eres un evaluador de QA de llamadas. Clasifica y evalúa UNA llamada en una sola respuesta.\n\n` +
+    `Devuelve exclusivamente JSON válido con: agente, vertical, tipo_llamada, puntaje_total (0-100), nivel, resumen_ejecutivo, recomendaciones (máx. 3), objections (lista de {texto,categoria,respuesta_recomendada,resultado}).\n` +
+    `Vertical sugerida: ${verticalHint || 'desconocida'}. Agente: ${agentName || 'No identificado'}.\n` +
+    `TRANSCRIPCIÓN:\n${transcript}`;
+  const response = await anthropic.messages.create({
+    model: process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5', max_tokens: 900,
+    messages: [{ role: 'user', content: prompt }],
+  });
+  const text = response.content[0].text.trim();
+  const match = text.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('Evaluación: el proveedor no devolvió JSON válido');
+  return { ...JSON.parse(match[0]), provider: 'anthropic', rubricVersion: 'v1' };
+}
+
+module.exports = { analyzeCall, classifyCall, evaluateCallUnified };
