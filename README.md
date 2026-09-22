@@ -1,7 +1,8 @@
 # E-Trainer — base de QA de llamadas
 
-Primera fase local y segura de la plataforma: recibe llamadas desde Call Tools,
-filtra llamadas cortas, encola trabajos persistentes, genera una evaluación única
+Primera fase local y segura de la plataforma: recibe llamadas ya filtradas por
+Call Tools (>60 s), conserva una defensa secundaria ante llamadas cortas, encola
+trabajos persistentes, genera una evaluación única
 y expone resultados para un futuro dashboard LeadMinded. No activa proveedores,
 Tella ni roleplay por voz por defecto.
 
@@ -41,6 +42,15 @@ Antes de desplegar con varios procesos debe migrarse a PostgreSQL/cola gestionad
 añadir firma del webhook y autenticar/RBAC las APIs de lectura. `courses` y
 `roleplayScenarios` son modelos reservados para futuras integraciones; no hay
 integración Tella ni práctica por voz implementada todavía.
+
+## Filtro de coste en Call Tools
+
+Configure el filtro **primario** de duración en la automatización de origen de
+Call Tools, antes del webhook: solo llamadas finalizadas con grabación y duración
+mayor que 60 segundos deben enviarse a E-Trainer. La configuración verificable,
+el contrato del payload y el procedimiento de pruebas 59/60/61 están en
+[docs/calltools-source-filter.md](docs/calltools-source-filter.md). El filtro del
+backend es una segunda barrera, no la arquitectura principal.
 
 ## Pruebas
 
